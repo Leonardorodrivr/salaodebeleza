@@ -4,8 +4,8 @@ require('dotenv').config();
 console.log('Conectando ao Supabase...');
 
 const pool = new Pool({
-  host: 'aws-0-sa-east-1.pooler.supabase.com',
-  port: 6543,
+  host: 'aws-1-sa-east-1.pooler.supabase.com',
+  port: 5432,
   database: 'postgres',
   user: 'postgres.euktrbwrgzigwlvqlzma',
   password: process.env.DB_PASSWORD,
