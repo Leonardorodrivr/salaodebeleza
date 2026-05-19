@@ -13,19 +13,20 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  max: 20,
+  max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  connectionTimeoutMillis: 15000,
   ssl: { rejectUnauthorized: false },
-  family: 4,
 });
 
-pool.on('connect', () => {
-  console.log('✅ Conectado ao PostgreSQL Supabase!');
-});
-
-pool.on('error', (err) => {
-  console.error('❌ Erro PostgreSQL:', err.message);
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('❌ Erro ao conectar ao banco:', err.message);
+    console.error('❌ Detalhes:', err.stack);
+  } else {
+    console.log('✅ Conectado ao PostgreSQL Supabase!');
+    release();
+  }
 });
 
 const query = async (text, params) => {
