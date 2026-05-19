@@ -176,3 +176,7 @@ router.get('/health', (req, res) => {
 });
 
 module.exports = router;
+
+// Super Admin
+const { router: superAdminRouter } = require('./superadmin');
+router.use('/superadmin', superAdminRouter);
