@@ -5,7 +5,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
 const path = require('path');
 
 const routes = require('./routes/index');
@@ -22,21 +21,6 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 300,
-  message: { success: false, message: 'Muitas requisições. Tente novamente em 15 minutos.' }
-});
-app.use('/api/', limiter);
-
-// Rate limit mais restrito para auth
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { success: false, message: 'Muitas tentativas de login.' }
-});
-app.use('/api/auth/login', authLimiter);
 
 // ============================================================
 // CORS
