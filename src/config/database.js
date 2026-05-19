@@ -1,16 +1,13 @@
 const { Pool } = require('pg');
-const dns = require('dns');
 require('dotenv').config();
 
-dns.setDefaultResultOrder('ipv4first');
-
-console.log('🔌 Iniciando conexão com Supabase (IPv4)...');
+console.log('🔌 Conectando ao Supabase via Pooler IPv4...');
 
 const pool = new Pool({
-  host: 'db.euktrbwrgzigwlvqlzma.supabase.co',
-  port: 5432,
+  host: '54.94.90.106',
+  port: 6543,
   database: 'postgres',
-  user: 'postgres',
+  user: 'postgres.euktrbwrgzigwlvqlzma',
   password: process.env.DB_PASSWORD || 'Vr!@#7151650',
   max: 5,
   idleTimeoutMillis: 60000,
@@ -22,7 +19,7 @@ pool.connect((err, client, release) => {
   if (err) {
     console.error('❌ Erro ao conectar:', err.message);
   } else {
-    console.log('✅ Conectado ao Supabase!');
+    console.log('✅ Conectado ao Supabase com sucesso!');
     release();
   }
 });
