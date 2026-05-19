@@ -3,15 +3,14 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME || 'beleza_saas',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
+
+  connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-  ssl: { rejectUnauthorized: false }
+  connectionTimeoutMillis: 10000,
+  ssl: { rejectUnauthorized: false },
+  family: 4
+
 });
 
 pool.on('connect', () => {
