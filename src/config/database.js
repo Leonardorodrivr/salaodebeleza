@@ -2,27 +2,29 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT) || 5432,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+  ssl: { rejectUnauthorized: false },
+  family: 4,
 });
 
 pool.on('connect', () => {
-  console.log('✅ Conectado ao PostgreSQL');
+  console.log('✅ Conectado ao PostgreSQL Supabase!');
 });
 
 pool.on('error', (err) => {
-  console.error('❌ Erro na conexão com PostgreSQL:', err.message);
+  console.error('❌ Erro PostgreSQL:', err.message);
 });
 
 const query = async (text, params) => {
-  const start = Date.now();
   try {
     const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log('Query executada:', { duration, rows: res.rowCount });
     return res;
   } catch (error) {
     console.error('Erro na query:', error.message);
