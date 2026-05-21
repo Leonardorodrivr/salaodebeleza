@@ -3,26 +3,40 @@ require('dotenv').config();
 
 console.log('Conectando ao Supabase...');
 
-const pool = new Pool({
-  host: 'aws-1-sa-east-1.pooler.supabase.com',
-  port: 5432,
-  database: 'postgres',
-  user: 'postgres.euktrbwrgzigwlvqlzma',
-  password: process.env.DB_PASSWORD,
-  max: 5,
-  idleTimeoutMillis: 60000,
-  connectionTimeoutMillis: 30000,
-  ssl: { rejectUnauthorized: false },
-});
+const configs = [
+  { host: 'aws-0-sa-east-1.pooler.supabase.com', port: 6543, user: 'postgres.euktrbwrgzigwlvqlzma' },
+  { host: 'aws-1-sa-east-1.pooler.supabase.com', port: 6543, user: 'postgres.euktrbwrgzigwlvqlzma' },
+  { host: 'aws-0-sa-east-1.pooler.supabase.com', port: 5432, user: 'postgres.euktrbwrgzigwlvqlzma' },
+  { host: 'aws-1-sa-east-1.pooler.supabase.com', port: 5432, user: 'postgres.euktrbwrgzigwlvqlzma' },
+];
 
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error('Erro ao conectar banco:', err.message);
-  } else {
-    console.log('Conectado ao Supabase com sucesso!');
-    release();
+let pool;
+
+async function iniciarConexao() {
+  for (const config of configs) {
+    try {
+      console.log(`Tentando ${config.host}:${config.port}...`);
+      const p = new Pool({
+        host: config.host, port: config.port,
+        database: 'postgres', user: config.user,
+        password: process.env.DB_PASSWORD,
+        max: 5, idleTimeoutMillis: 60000,
+        connectionTimeoutMillis: 10000,
+        ssl: { rejectUnauthorized: false },
+      });
+      const client = await p.connect();
+      client.release();
+      pool = p;
+      console.log(`Conectado! ${config.host}:${config.port}`);
+      return;
+    } catch (err) {
+      console.log(`Falhou: ${err.message}`);
+    }
   }
-});
+  console.error('Nenhuma configuracao funcionou!');
+}
+
+iniciarConexao();
 
 const query = async (text, params) => {
   try {
@@ -48,4 +62,4 @@ const transaction = async (callback) => {
   }
 };
 
-module.exports = { pool, query, transaction };
+module.exports = { query, transaction };
