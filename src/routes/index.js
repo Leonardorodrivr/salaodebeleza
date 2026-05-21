@@ -144,6 +144,27 @@ router.get('/profissional/relatorio', authenticate, async (req, res) => {
       ? Math.min(Math.round((parseFloat(total_comissao) / profissional.meta_mensal) * 100), 100)
       : 0;
 
+    res.json({
+      success: true,
+      data: {
+        profissional: {
+          nome: profissional.nome,
+          comissao_percentual: profissional.comissao_percentual,
+          meta_mensal: profissional.meta_mensal
+        },
+        mes,
+        total_atendimentos: parseInt(total_atendimentos),
+        total_servicos: parseFloat(total_servicos),
+        total_comissao: parseFloat(total_comissao),
+        percentual_meta: percentualMeta,
+        atendimentos: atendimentos.rows
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Erro ao gerar relatório' });
+  }
+});
+
 
 // ============================================================
 // ROTAS PÚBLICAS - Agendamento Online por Salão
